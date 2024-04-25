@@ -182,3 +182,12 @@ meson_do_install() {
 }
 
 EXPORT_FUNCTIONS do_configure do_compile do_install
+
+EXTRA_OEMESON_TEST ?= ""
+MESON_QEMU_WRAPPER_RUNTEST = "${@d.getVar('MESON_QEMU_WRAPPER_TEST_ENABLED') == '1' and d.getVar('EXEWRAPPER_ENABLED') == 'True'}"
+meson_do_test() {
+    meson test -C ${B} --suite ${EXTRA_OEMESON_TEST}
+}
+
+do_install[prefuncs] += "${@'meson_do_test' if d.getVar('MESON_QEMU_WRAPPER_RUNTEST') == '1' else ''}"
+
